@@ -218,3 +218,5 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+!outputs/step0/step0_hand_labeling_labeled.csv

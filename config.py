@@ -1,0 +1,272 @@
+"""
+Shared configuration for the Step 0 pipeline (01_extract -> 02_clean).
+
+Every notebook imports from here, so the sector definition, the time window and
+the environment are set in ONE place. Change ENV to "PROD" for the final run.
+"""
+import os
+from pathlib import Path
+
+# ----------------------------------------------------------------------------- environment
+ENV = "PROD"            # "TEST" while developing, "PROD" for the numbers that go in the deck
+SECTOR_NAME = "Underwater drones"
+
+# ----------------------------------------------------------------------------- counting rules
+# Patents of invention ("PI") are the PW unit. Utility models ("UM", IM_Theory_0: cheaper, no inventive-step check,
+# very common in China) can be counted separately with the SAME query, as a robustness / appropriability check:
+# in the first cell of 01_extract run  %env PW_IPR_TYPE=UM  before importing config. Outputs then go to step0_UM/.
+IPR_TYPE = os.environ.get("PW_IPR_TYPE", "PI")
+YEAR_MIN, YEAR_MAX = 2000, 2025
+MISSING_YEAR = 9999     # PATSTAT code for an unknown year
+TRUNCATION_WINDOW = 3   # last years incomplete because of the 18-month publication lag
+LAST_COMPLETE_YEAR = YEAR_MAX - TRUNCATION_WINDOW   # = 2022: years after it are flagged, not read as a decline
+
+# Family year = MIN(earliest_filing_year) over the PI applications of the family
+# (earliest priority of the invention), computed in 01_extract and reused everywhere.
+
+# ----------------------------------------------------------------------------- sector query (final version)
+# Block 1 - CPC 2000-series indexing codes for unmanned underwater vessels ...
+BLOCK1_CPC = (
+    "B63G2008/002",     # unmanned underwater vessels
+    "B63G2008/004",     # autonomously operating (AUV)
+    "B63G2008/005",     # remotely controlled (ROV)
+    "B63G2008/007",     # tethered
+    "B63G2008/008",     # docking stations for unmanned underwater vessels
+)
+# ... AND an underwater term in title or abstract (regex, matched on lower-case text).
+# Acronyms are matched as whole words (optional plural), so "rov" never matches "improve".
+UNDERWATER_TERMS = (
+    r"\bunderwater", r"\bsub[\s-]?sea", r"\bundersea", r"\bsubmersible", r"\bsubmarine",
+    r"\bseabed", r"\bsea[\s-]?floor",
+    r"\brovs?\b", r"\bauvs?\b", r"\buuvs?\b",
+)
+
+# Block 2 - specific keywords, anywhere in title or abstract. "unmanned / uncrewed / autonomous underwater" has no
+# "vehicle" on purpose: it also catches "... underwater robot / glider / system".
+SPECIFIC_KEYWORDS = (
+    r"\b(?:unmanned|uncrewed|autonomous)[\s-]+underwater",
+    r"\b(?:unmanned|uncrewed|autonomous)[\s-]+submersible",
+    r"\bunderwater[\s-]+drone", r"\bsubsea[\s-]+drone",
+    r"\bunderwater[\s-]+glider",
+    r"\bsubsea[\s-]+resident[\s-]+vehicle",
+    r"\bbenthic[\s-]+vehicle",
+    r"\b(?:underwater|seabed)[\s-]+crawler",
+    r"\brobotic[\s-]+fish",
+    r"\bbiomimetic[\s-]+underwater[\s-]+robot",
+    r"\bswarming[\s-]+underwater",
+    r"\bmulti[\s-]?auvs?\b",
+)
+
+# Block 3 - generic keywords: in the TITLE, or in the abstract of a family carrying a B63 or B25J code
+GENERIC_KEYWORDS = (
+    r"\bremotely[\s-]+operated[\s-]+vehicle",
+    r"\bremotely[\s-]+operated[\s-]+underwater",
+    r"\b(?:underwater|subsea|submarine)[\s-]+robot",
+)
+BLOCK3_CPC = ("B63", "B25J")
+
+# Block 4 - neighbouring main groups AND a robot term in title or abstract
+BLOCK4_CPC = ("B63G8/", "B63C11/")
+ROBOT_TERMS = (
+    r"\brobot", r"\bdrones?\b", r"\bremotely[\s-]+operated",
+    r"\brovs?\b", r"\bauvs?\b", r"\buuvs?\b",
+)
+
+# Matching level of the blocks.
+# "application": a block fires when ONE application has both the code and the words in its own title/abstract;
+# "family":      codes and texts of all the applications of the family are pooled (Tutorial 1, Notebook 10, 5:
+#                a family-level keyword search recovers inventions first filed in other languages).
+# Both are always computed (columns in_sector_application / in_sector_family); this one defines the sector.
+MATCH_LEVEL = "family"
+
+# Block 5 - ROV / AUV / UUV as a whole word in the TITLE (an acronym in the title names the object of the patent).
+BLOCK5_TITLE_ACRONYMS = (r"\brovs?\b", r"\bauvs?\b", r"\buuvs?\b")
+# SQL LIKE cannot match whole words: these patterns keep the candidate pool small ("% rov%" still catches "rover",
+# which the Python regex then drops); applied to titles only
+BLOCK5_SQL_PATTERNS = ("% rov%", "rov %", "%(rov%", "%-rov%", "% auv%", "auv %", "%(auv%", "%-auv%",
+                       "% uuv%", "uuv %", "%(uuv%", "%-uuv%")
+
+# ----------------------------------------------------------------------------- grey zones
+# The labelling rule (01_extract, Section 6) says how each grey zone is labelled. In the sector:
+# - families that must stay in (offshore-wind inspection drones, surface or aerial systems that carry an underwater
+#   vehicle) are kept by the blocks;
+# - families that must go out are removed by the EXCLUSION RULES below, applied to the TITLE (the titles of all the
+#   family's applications). A family is excluded when its title matches an exclusion pattern AND contains no
+#   vehicle term (KEEP_TERMS). Both rules were checked on the labelled families (01_extract, 7.3).
+EXCLUSION_RULES = {
+    # energy devices and offshore-wind / marine-energy structures, where an ROV or a submarine is only mentioned
+    "energy_device": r"turbine|power[\s-]+generat|generator|hydrokinetic|wave[\s-]+(?:energy|power|rotor)"
+                     r"|wind[\s-]+(?:power|energy|turbine|farm)|energy[\s-]+(?:supply|transfer|conver)|power[\s-]+plant"
+                     r"|hydrogen|transmission[\s-]+of[\s-]+power|propeller",
+}
+KEEP_TERMS = (r"\brobot", r"\brovs?\b", r"\bauvs?\b", r"\buuvs?\b", r"\bdrones?\b", r"\bunmanned", r"\buncrewed",
+              r"\bautonomous", r"\bremotely", r"\bglider", r"robotic", r"\bcrawler", r"\bvehicle",
+              r"\binspect", r"\bmonitor", r"\bdetect")
+
+# Topic flags, only to COUNT how many sector families touch each grey zone (4.3) and to read them;
+# they never change the sector.
+GREY_ZONE_PATTERNS = {
+    "offshore_wind": r"\boffshore[\s-]+wind|\bwind[\s-]+(?:turbine|farm|power|park)|\bmonopile",
+    "hybrid_surface": r"\b(?:unmanned|autonomous|uncrewed)[\s-]+(?:surface|ship|boat)|\busvs?\b|\bsurface[\s-]+(?:vehicle|vessel|drone)"
+                      r"|\bsemi[\s-]?submersible|\bmother[\s-]?ship",
+    "hybrid_air": r"\baerial|\buavs?\b|\baircraft|\bflying|\bamphibious|\bair[\s-]+(?:and[\s-]+)?(?:water|sea)|"
+                  r"\bcross[\s-]?(?:domain|medium)|\btrans[\s-]?medi",
+    "outside_sea": r"\bnuclear|\breactor|\bpipe[\s-]?(?:line)?[\s-]+inspection|\bin[\s-]?pipe|\bsewer|\btank[\s-]+(?:cleaning|inspection)"
+                   r"|storage[\s-]+and[\s-]+retrieval|\bwarehouse",
+}
+OFFSHORE_WIND_CPC = ("Y02E10/727", "F03D13/25", "E02B2017/0091")
+GREY_ZONE_VALUES = ("offshore_wind", "hybrid_surface", "hybrid_air", "outside_sea", "generic_component",
+                    "crew_not_stated", "other")
+
+# Hand-labelled corrections (01_extract, 7.6): families labelled 0 leave the sector, families labelled 1 that the
+# query misses (broad-net and discovery samples) enter it.
+USE_LABEL_CORRECTIONS = True
+
+# The definition every family is labelled against (01_extract, Section 6). Two labels per family:
+#   is_relevant (STRICT rule, defines the sector): 1 only if an underwater drone, a part or tool designed for one, its
+#     infrastructure or a method to operate it is the subject of the patent; 0 if the drone is only mentioned, only
+#     installs or operates generic subsea equipment, or the vehicle is not stated to be unmanned.
+#   is_relevant_broad (BROAD rule, sensitivity check only): 1 if the patent matches the definition even partly.
+# is_relevant <= is_relevant_broad always.
+LABEL_DEFINITION = """
+An underwater drone is an unmanned vehicle that moves and works under water: remotely operated vehicles (ROVs),
+autonomous and unmanned underwater vehicles (AUVs, UUVs), underwater gliders, bio-inspired robots (robotic fish),
+seabed crawlers and hybrid vehicles that operate under water. The sector includes the drone itself, its parts
+(hull, propulsion, buoyancy, power, sensors, manipulators, tools carried or operated by it), its infrastructure
+(launch and recovery, docking, charging, tethers) and the methods to control, navigate and coordinate it.
+"""
+
+# ----------------------------------------------------------------------------- broad net (recall check)
+# A deliberately wide query (IPC + CPC + generic keywords): families it finds and the sector does not are where the
+# sector could miss relevant patents. A random sample of them is labelled to estimate recall (01_extract, 7.4).
+BROAD_IPC = ("B63G8/00", "B63G8/08", "B63G8/14", "G01S15/89", "H04B11/00", "G01C13/00")
+BROAD_CPC = BLOCK1_CPC
+BROAD_KEYWORDS = (
+    "underwater drone", "subsea drone", "underwater vehicle", "unmanned underwater vehicle",
+    "uncrewed underwater vehicle", "autonomous underwater vehicle", "remotely operated vehicle",
+    "remotely operated underwater", "unmanned underwater", "autonomous underwater",
+    "uncrewed underwater", "unmanned submersible", "autonomous submersible", "uncrewed submersible",
+    "underwater glider", "subsea robot", "underwater robot", "submarine robot",
+    "subsea resident vehicle", "benthic vehicle", "hovering autonomous underwater",
+    "underwater crawler", "seabed crawler", "biomimetic underwater robot", "robotic fish",
+    "swarming underwater", "multi-auv",
+)
+
+# ----------------------------------------------------------------------------- retrieval experiments (01_extract, 8)
+FOCAL_FAMILY_IDS = (55819443, 78422041, 74782746, 59856089, 58166573)   # five typical sector patents
+SECTOR_DESCRIPTION = """
+Technology concerning unmanned and uncrewed underwater vehicles,
+including autonomous underwater vehicles (AUVs) and remotely operated
+vehicles (ROVs). These systems are designed to operate underwater
+without a human operator on board and may perform autonomous or
+remotely controlled navigation, exploration, inspection, monitoring,
+mapping and maintenance activities.
+
+The technology includes underwater propulsion, guidance and control,
+navigation and positioning systems, obstacle avoidance, underwater
+communication, sensors, robotic manipulation and docking systems.
+Applications include subsea infrastructure inspection, oceanographic
+research, offshore operations, seabed exploration and underwater
+intervention.
+"""
+
+# ----------------------------------------------------------------------------- sampling and labels
+SEED = 42
+SAMPLE_SIZE = 100            # random in-sector families to hand-label (PW kick-off: ~100)
+BROAD_SAMPLE_SIZE = 50       # broad-net families outside the sector, labelled to estimate recall
+LABEL_DIR = Path("labels")   # label files go here (see labels/README.md)
+LABEL_COL = "is_relevant"    # label column (0/1)
+LABEL_COL_BROAD = "is_relevant_broad"   # broad-rule label (0/1), upper bound of precision
+INVALID_APPLN_ID = 900_000_000      # appln_id 0 or above this = dummy application (Tutorial 1, Notebook 10, 3.1)
+
+# ----------------------------------------------------------------------------- I/O
+_SUFFIX = "" if IPR_TYPE == "PI" else f"_{IPR_TYPE}"
+OUT_STEP0 = Path("outputs") / ENV.lower() / f"step0{_SUFFIX}"
+OUT_STEP1 = Path("outputs") / ENV.lower() / f"step1{_SUFFIX}"   # cleaned datasets used from Step 1 on
+CHUNK = 5000                 # ids per query when filtering with IN (...), keeps PROD queries manageable
+
+SBERT_MODEL = "graziasveva93/sbert-adapt-ub"   # Patent SBERT used in the course tutorials
+
+# ----------------------------------------------------------------------------- 02_clean: extra data sources
+# Each block can be switched off if it is too slow on PROD. See README, "Data inventory".
+FETCH_PUBLICATIONS = True    # tls211: grant date and grant lag, number of claims (OECD quality indicators)
+FETCH_CITATION_DETAIL = True # tls212 + tls215: citation origin, X/Y/A categories, NPL (science) citations
+FETCH_CITATION_CPC = True    # CPC subclasses of cited / citing families (originality, generality)
+FETCH_INVENTORS = True       # tls207/tls206 inventors: where R&D happens, team size
+FETCH_LEGAL_EVENTS = True    # tls231 INPADOC legal events: renewals, lapses, oppositions, transfers
+FETCH_WIPO_FIELDS = True     # tls230 + tls901: WIPO 35 technology fields (Schmoch 2008)
+FETCH_BENCHMARK = True       # families per year in all patents and in a neighbouring field (growth vs total)
+BENCHMARK_CPC = ("B63",)     # neighbouring field: ships and marine technology (patent-propensity comparison)
+
+# ----------------------------------------------------------------------------- applicant harmonisation
+LEGAL_SUFFIXES = (
+    "CO LTD", "CO LIMITED", "COMPANY LIMITED", "COMPANY", "CORPORATION", "CORP", "INCORPORATED", "INC",
+    "LIMITED", "LTD", "LLC", "PLC", "GMBH", "AG", "SPA", "SRL", "SAS", "SA", "AS", "ASA", "AB", "OY", "BV",
+    "NV", "KK", "KABUSHIKI KAISHA", "CO", "GROUP CO", "HOLDINGS", "HOLDING",
+)
+LEGAL_PREFIXES = ("KABUSHIKI KAISHA", "THE")   # legal forms written BEFORE the name ("KABUSHIKI KAISHA TOSHIBA")
+
+# regex on the normalised name -> corporate group. Starting list: extend it after reading
+# outputs/<env>/step1/applicants_to_review.csv and document every rule in the technical appendix.
+GROUP_ALIASES = {
+    r"^KONGSBERG": "KONGSBERG",
+    r"^SAAB": "SAAB",
+    r"^OCEANEERING": "OCEANEERING",
+    r"^TELEDYNE": "TELEDYNE",
+    r"^SUBSEA ?7": "SUBSEA 7",
+    r"^FUGRO": "FUGRO",
+    r"^HUNTINGTON INGALLS|^HYDROID": "HUNTINGTON INGALLS (HYDROID)",
+    r"^GENERAL DYNAMICS|^BLUEFIN ROBOTICS": "GENERAL DYNAMICS (BLUEFIN)",
+    r"^BOEING": "BOEING",
+    r"^LOCKHEED MARTIN": "LOCKHEED MARTIN",
+    r"^THALES": "THALES",
+    r"^ATLAS ELEKTRONIK": "ATLAS ELEKTRONIK",
+    r"^ECA ROBOTICS|^ECA GROUP|^GROUPE GORGE|^EXAIL": "EXAIL (ECA)",
+    r"^FINCANTIERI": "FINCANTIERI",
+    r"^LEONARDO|^FINMECCANICA|^WHITEHEAD ALENIA": "LEONARDO",
+    r"^SAIPEM": "SAIPEM",
+    r"^HOUSTON MECHATRONICS|^NAUTICUS ROBOTICS": "NAUTICUS ROBOTICS",
+    r"^SHELL|^ROYAL DUTCH SHELL": "SHELL",
+    r"^EQUINOR|^STATOIL": "EQUINOR",
+    # CNOOC and its listed engineering subsidiary Offshore Oil Engineering Co. (COOEC)
+    r"^CNOOC|^CHINA NATIONAL OFFSHORE OIL|^OFFSHORE OIL ENGINEERING": "CNOOC",
+    # CSSC research institutes (702nd = China Ship Scientific Research Center, 710th, 719th...; CSIC merged into CSSC in 2019)
+    r"^CHINA STATE SHIPBUILDING|^CHINA SHIPBUILDING|^CSSC|^CSIC|RESEARCH INSTITUTE,? (OF )?CHINA SHIPBUILDING"
+    r"|^CHINA SHIP SCIENTIFIC RESEARCH CENT": "CHINA STATE SHIPBUILDING (CSSC)",
+    r"^HARBIN ENG|HARBIN ENGINEERING UNIVERSITY": "HARBIN ENGINEERING UNIVERSITY",
+    r"^SHENYANG INST(ITUTE)? OF AUTOMATION": "SHENYANG INSTITUTE OF AUTOMATION (CAS)",
+    r"^ZHEJIANG UNIV": "ZHEJIANG UNIVERSITY",
+    # the same Chinese universities under different English translations, and their local institutes
+    r"NORTHWEST(ERN)? (POLYTECHNICAL|INDUSTRY|INDUSTRIAL) UNIVERSITY": "NORTHWESTERN POLYTECHNICAL UNIVERSITY",
+    r"^SHANGHAI (JIAO ?TONG|TRAFFIC) UNIVERSITY": "SHANGHAI JIAO TONG UNIVERSITY",
+    # China Huaneng Group: Huaneng Power International and its branches, Xi'an Thermal Power Research Institute
+    r"^HUANENG|^HUA ENERGY INTERNATIONAL ELECTRIC POWER|INTERNATIONAL ELECTRIC POWER JIANGSU ENERGY"
+    r"|^XIAN THERMAL POWER RESEARCH|^XIAN INSTITUTE OF THERMAL RESEARCH": "CHINA HUANENG GROUP",
+    r"^CHINA THREE GORGES|^THREE GORGES|^YANGTZE RIVER THREE GORGES": "CHINA THREE GORGES",
+    r"^BAE SYSTEMS": "BAE SYSTEMS",
+    r"^FUNDACION TECNALIA": "TECNALIA",
+    r"^SIEMENS": "SIEMENS",
+    r"^KOREA INST(ITUTE)? OF OCEAN": "KIOST",
+    r"^MITSUBISHI HEAVY": "MITSUBISHI HEAVY INDUSTRIES",
+    r"^KAWASAKI": "KAWASAKI HEAVY INDUSTRIES",
+}
+# known underwater-vehicle players: if several are missing, the query or the aliases are probably too narrow
+KNOWN_PLAYERS = (
+    "KONGSBERG", "SAAB", "OCEANEERING", "TELEDYNE", "SUBSEA 7", "FUGRO", "HUNTINGTON INGALLS (HYDROID)",
+    "GENERAL DYNAMICS (BLUEFIN)", "EXAIL (ECA)", "NAUTICUS ROBOTICS", "HARBIN ENGINEERING UNIVERSITY",
+    "SHENYANG INSTITUTE OF AUTOMATION (CAS)",
+)
+
+# ----------------------------------------------------------------------------- legal events (tls231)
+# Regex on the INPADOC event category title / event text, to group events into the families of the lectures
+# (IM_Theory_1 and 2). Check the codes that appear with tls803_legal_event_code before trusting a category.
+LEGAL_EVENT_PATTERNS = {
+    "renewal_fee": r"annual fee|renewal fee|maintenance fee|\bfee paid",
+    "lapse": r"lapse|ceased|expir|non-payment",
+    "withdrawal_refusal": r"withdraw|refus|reject|deemed to be withdrawn",
+    "opposition": r"opposition|opposed",
+    "revocation": r"revoc|invalid|nullit",
+    "transfer": r"transfer|assignment|change of owner|change of proprietor|change of applicant",
+    "licence": r"licen[cs]e",
+    "litigation": r"litigation|court|infringement",
+}

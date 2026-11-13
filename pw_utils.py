@@ -88,12 +88,14 @@ def apply_blocks(units):
         abstract.str.contains(rx_gen) & codes.apply(has_code, prefixes=C.BLOCK3_CPC))
     out["b4_neighbour"] = codes.apply(has_code, prefixes=C.BLOCK4_CPC) & text.str.contains(rx_robot)
     out["b5_acronym_title"] = title.str.contains(rx_b5)
+    out["b6_vehicle_task"] = (text.str.contains(compile_any(C.BLOCK6_OBJECT)) & text.str.contains(compile_any(C.BLOCK6_TASK))) \
+        | text.str.contains(compile_any(C.BLOCK6_STANDALONE))
     out["has_cpc"] = codes.apply(len) > 0
     out = pd.concat([out, exclusion_flags(title)], axis=1)
     return summarise_blocks(out)
 
 
-BLOCKS = ["b1_cpc", "b2_specific", "b3_generic", "b4_neighbour", "b5_acronym_title"]
+BLOCKS = ["b1_cpc", "b2_specific", "b3_generic", "b4_neighbour", "b5_acronym_title", "b6_vehicle_task"]
 EXCLUSIONS = [f"ex_{k}" for k in C.EXCLUSION_RULES]
 FLAG_NAMES = BLOCKS + ["has_cpc"] + EXCLUSIONS
 
@@ -250,7 +252,7 @@ def clean_patent_text(text, stop_words=None):
 def legal_event_flags(text):
     """Event families (renewal, lapse, opposition, transfer...) matched in event category titles / texts.
     `text` is a pandas Series; returns one boolean column per family of config.LEGAL_EVENT_PATTERNS."""
-    t = pd.Series(text).fillna("").astype(str).str.lower()
+    t = pd.Series(text).fillna("").astype(str).str.lower().str.replace(r"\s+", " ", regex=True)
     return pd.DataFrame({k: t.str.contains(p, regex=True) for k, p in C.LEGAL_EVENT_PATTERNS.items()}, index=t.index)
 
 

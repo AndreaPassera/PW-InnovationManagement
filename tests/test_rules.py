@@ -49,6 +49,23 @@ def test_block5_acronym_in_title():
     assert not apply_blocks(family("Rover wheel", "used with an ROV"))["b5_acronym_title"].iat[0]   # title only
 
 
+def test_block6_vehicle_with_task_or_underwater_robot():
+    # misses of the PROD validation (v3): now selected
+    for title in ["Underwater vehicle obstacle avoidance method and system",
+                  "Underwater vehicle three-dimensional path planning method",
+                  "Composite autonomous uninhabited underwater vehicle",
+                  "Underwater operation robot", "Underwater variant glider"]:
+        assert apply_blocks(family(title, "", []))["b6_vehicle_task"].iat[0], title
+    # a generic underwater vehicle with no task, and a robot that is not under water, stay out
+    assert not apply_blocks(family("Underwater vehicle hull coating", "paint composition", []))["b6_vehicle_task"].iat[0]
+    assert not apply_blocks(family("Welding robot", "for ship hulls", []))["b6_vehicle_task"].iat[0]
+
+
+def test_block6_sql_phrases_reach_the_candidate_pool():
+    phrases = regex_to_like_phrases(C.SPECIFIC_KEYWORDS + C.GENERIC_KEYWORDS) + list(C.BLOCK6_SQL_PHRASES)
+    assert "underwater vehicle" in phrases and "underwater%robot" in phrases
+
+
 def test_exclusion_rule_removes_energy_devices():
     turbine = apply_blocks(family("A flowing-water driveable turbine assembly", "deployed by an ROV", ["B63G2008/002"]))
     assert turbine["matched"].iat[0] and turbine["ex_energy_device"].iat[0] and not turbine["in_sector"].iat[0]
@@ -102,6 +119,26 @@ def test_legal_event_flags():
                                      "Opposition filed", "Transfer of rights", None]))
     assert f.loc[0, "renewal_fee"] and f.loc[1, "lapse"] and f.loc[2, "opposition"] and f.loc[3, "transfer"]
     assert not f.loc[4].any()
+
+
+def test_legal_event_negative_cases():
+    f = legal_event_flags(pd.Series([
+        "PLBE NO OPPOSITION FILED WITHIN TIME LIMIT | IP RIGHT REVIEW REQUEST | STATUS: NO OPPOSITION FILED WITHIN TIME LIMIT",
+        "LAPSE FOR FAILURE TO PAY MAINTENANCE FEES | IP RIGHT CESSATION | PATENT EXPIRED DUE TO NONPAYMENT OF MAINTENANCE FEES",
+        "TERMINATION OF PATENT RIGHT DUE TO NON-PAYMENT OF ANNUAL FEE | IP RIGHT CESSATION | ",
+        "ANNUAL FEE PAID TO NATIONAL OFFICE | PAYMENT | ",
+        "OPPOSITION FILED | IP RIGHT REVIEW REQUEST | ",
+    ]))
+    assert not f.loc[0, "opposition"]                                  # "no opposition" is not an opposition
+    assert f.loc[1, "lapse"] and not f.loc[1, "renewal_fee"]           # an expiry for non-payment is not a renewal
+    assert f.loc[2, "lapse"] and not f.loc[2, "renewal_fee"]           # CN CF01
+    assert f.loc[3, "renewal_fee"] and not f.loc[3, "lapse"]           # EP PGFP
+    assert f.loc[4, "opposition"]
+
+
+def test_shenyang_alias_with_cas_prefix():
+    assert to_group(normalise_name("CHINESE ACADEMY OF SHENYANG INSTITUTE OF AUTOMATION")) == \
+        "SHENYANG INSTITUTE OF AUTOMATION (CAS)"
 
 
 # ---------------------------------------------------------------- BM25

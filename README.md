@@ -45,7 +45,11 @@ A DOCDB family (patents of invention, earliest priority 2000–2025) is selected
 2. a specific keyword (e.g. *autonomous underwater*, *underwater glider*, *robotic fish*) in title or abstract;
 3. a generic keyword (*remotely operated vehicle*, *underwater robot*, ...) in the title, or in the abstract of a family with a `B63` or `B25J` code;
 4. CPC `B63G8/` or `B63C11/` **and** a robot term (*robot*, *drone*, *ROV*, *AUV*, *UUV*, ...);
-5. *ROV*, *AUV* or *UUV* as a whole word in the title.
+5. *ROV*, *AUV* or *UUV* as a whole word in the title;
+6. *underwater (…) vehicle* or *uninhabited underwater* **and** an operating task (path, obstacle, navigation,
+   positioning, depth control, docking, autonomous, unmanned…), or *underwater/subsea (…) robot* or *underwater (…)
+   glider* on their own. Added in v4: the PROD validation of v3 (recall 73%, 7.4) and the text retrieval outside the
+   sector (8.2) showed that these wordings, typical of machine-translated CN titles, were the main source of misses.
 
 **Grey zones.** Selected families whose title is about an energy device or offshore structure (turbine, generator,
 energy supply, wind farm, propeller...) **and** has no vehicle term (robot, ROV, AUV, unmanned, vehicle, inspection,
@@ -65,7 +69,9 @@ requires code and words on the same application. Both are computed (`in_sector_f
 CPC contains the IPC main groups in more detail. Families without any CPC code can enter only through keywords:
 Section 4.2 of `01_extract` measures how many there are, by office.
 
-**Validation** (Section 7): precision with Wilson intervals (by block, period and office), Cohen's kappa, the check
+**Validation** (Section 7) uses only the **random PROD samples** (`config.PRECISION_SAMPLES`, `broad_net_outside`;
+TEST labels are excluded by `config.VALIDATION_EXCLUDE_FILES` but still correct the sector). Precision is
+**stratified** (blocks 1-5 / block 6 only, each with its own random sample). Then: precision with Wilson intervals (by block, period and office), Cohen's kappa, the check
 of the exclusion rules, grey-zone sensitivity, recall relative to a **broad net** (a deliberately wide query with IPC
 codes and generic phrases such as *underwater vehicle*: a random sample of its families outside the sector estimates
 what the sector misses) and the false positives by block.
@@ -119,6 +125,8 @@ What is collected, from which table, and which course concept it serves.
 
 ## Labelling workflow
 
+The full protocol (who labels what, blind second labelling, adjudication) is in `labels/README.md`.
+
 1. Run `01_extract.ipynb` up to Section 6. It writes the files to label, **without the flags** that selected each
    family (they are in `label_samples_key.csv`, so labellers are not anchored): `label_sample_sector.csv` (precision)
    and `label_sample_broad_net.csv` (recall). Section 8.2 writes `label_discovery.csv` (the families that BM25 and
@@ -159,17 +167,11 @@ asks for pinned versions.
 
 ## Generative-AI statement
 
-Claude (Anthropic) helped design the sector rules and write these notebooks. The hand labels in `labels/` were
-produced with Claude, which applied the written definition of underwater drones (`config.LABEL_DEFINITION`) and the
-two rules (strict `is_relevant`, which defines the sector, and broad `is_relevant_broad`, "1 if it matches even
-partly", kept as a sensitivity check) to each title and abstract; the reason of every label is in the `note` column.
-
-## Results committed to the repository
-
-The notebooks are committed with their PROD outputs. Bulk PATSTAT extracts are not committed (kick-off rule: commit the
-queries, not the data): `outputs/<env>/` is git-ignored and is rebuilt by running the notebooks on TIP. Only small
-summary files used in the technical appendix are kept:
-
-- `outputs/figures/step0/`: block overlap and the three UMAP maps (PROD);
-- `outputs/tables/step0/`: `step0_summary.csv` (key numbers), `retrieval_evaluation.csv`, `discovery_precision_at_k.csv`;
-- `outputs/tables/step1/`: yearly benchmark counts (all patents and B63) used for the growth comparison.
+Claude (Anthropic) helped design the sector rules and write these notebooks. The first labels in `labels/`
+(`labels_test.csv`, `labels_prod.csv`) were produced with Claude, which applied the written definition of underwater
+drones (`config.LABEL_DEFINITION`) and the two rules (strict `is_relevant`, which defines the sector, and broad
+`is_relevant_broad`, kept as a sensitivity check) to each title and abstract; the reason of every label is in the
+`note` column. Two team members re-labelled a blind random subset of them (`labels/second/`): Cohen's kappa between
+humans and the LLM labels is reported in 7.2 (`label_agreement.csv`), and the disagreements were adjudicated by the
+team. The v4 samples (`block6`, the new `sector` and `broad_net_outside` families, the unlabelled `discovery` ones)
+were labelled by the team.

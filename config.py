@@ -1,5 +1,6 @@
 """
-Shared configuration for the Step 0 pipeline (01_extract -> 02_clean).
+Shared configuration for the Step 0 pipeline (01_extract -> 02_clean). Version 4 (block 6, PROD-only validation,
+legal-event flags on the tls803 descriptions).
 
 Every notebook imports from here, so the sector definition, the time window and
 the environment are set in ONE place. Change ENV to "PROD" for the final run.
@@ -71,6 +72,25 @@ ROBOT_TERMS = (
     r"\brobot", r"\bdrones?\b", r"\bremotely[\s-]+operated",
     r"\brovs?\b", r"\bauvs?\b", r"\buuvs?\b",
 )
+
+# Block 6 - added after the PROD validation (recall): a generic object ("underwater vehicle", "underwater X robot",
+# glider) together with an operating task, or an underwater robot / glider on its own. On the labelled families
+# OUTSIDE the v3 rule sector it recovers 62 of 93 relevant ones and catches 21 of 262 not relevant ones (those
+# labels are not a random sample): its precision is measured on its own random sample (label_sample_block6.csv).
+BLOCK6_OBJECT = (
+    r"\bunderwater[\s-]+(?:\w+[\s-]+){0,2}vehicles?\b",
+    r"\buninhabited[\s-]+underwater",
+)
+BLOCK6_TASK = (
+    r"\bpath", r"\broute", r"trajector", r"obstacle", r"navigat", r"positioning", r"depth[\s-]+control",
+    r"\bhover", r"docking", r"\brecover", r"formation", r"autonom", r"unmanned", r"uninhabited", r"uncrewed", r"\bswim",
+)
+BLOCK6_STANDALONE = (   # enough on their own, no task needed
+    r"\b(?:underwater|subsea|submarine)[\s-]+(?:\w+[\s-]+){0,2}robots?\b",
+    r"\bunderwater[\s-]+(?:\w+[\s-]+)?glider", r"\bglider[\s-]+robot",
+)
+BLOCK6_SQL_PHRASES = ("underwater vehicle", "underwater%vehicle", "underwater%robot", "subsea%robot",
+                      "submarine%robot", "uninhabited underwater", "glider")
 
 # Matching level of the blocks.
 # "application": a block fires when ONE application has both the code and the words in its own title/abstract;
@@ -177,6 +197,12 @@ BROAD_SAMPLE_SIZE = 50       # broad-net families outside the sector, labelled t
 LABEL_DIR = Path("labels")   # label files go here (see labels/README.md)
 LABEL_COL = "is_relevant"    # label column (0/1)
 LABEL_COL_BROAD = "is_relevant_broad"   # broad-rule label (0/1), upper bound of precision
+SECOND_LABEL_DIR = LABEL_DIR / "second"  # independent second labels, only for agreement (kappa); see labels/README.md
+BLOCK6_SAMPLE_SIZE = 50      # random families selected by block 6 ALONE, labelled as their own stratum (01_extract, 7.1)
+# Validation (01_extract, 7.1 and 7.4) uses only RANDOM PROD samples. TEST labels describe another database and come
+# from non-random samples (candidates, block5): they still correct the sector, but never enter precision or recall.
+PRECISION_SAMPLES = ("sector", "block6")
+VALIDATION_EXCLUDE_FILES = ("labels_test.csv",)
 INVALID_APPLN_ID = 900_000_000      # appln_id 0 or above this = dummy application (Tutorial 1, Notebook 10, 3.1)
 
 # ----------------------------------------------------------------------------- I/O
@@ -231,10 +257,10 @@ GROUP_ALIASES = {
     # CNOOC and its listed engineering subsidiary Offshore Oil Engineering Co. (COOEC)
     r"^CNOOC|^CHINA NATIONAL OFFSHORE OIL|^OFFSHORE OIL ENGINEERING": "CNOOC",
     # CSSC research institutes (702nd = China Ship Scientific Research Center, 710th, 719th...; CSIC merged into CSSC in 2019)
-    r"^CHINA STATE SHIPBUILDING|^CHINA SHIPBUILDING|^CSSC|^CSIC|RESEARCH INSTITUTE,? (OF )?CHINA SHIPBUILDING"
+    r"CHINA STATE SHIPBUILDING|CHINA SHIPBUILDING|\bCSSC\b|\bCSIC\b"
     r"|^CHINA SHIP SCIENTIFIC RESEARCH CENT": "CHINA STATE SHIPBUILDING (CSSC)",
     r"^HARBIN ENG|HARBIN ENGINEERING UNIVERSITY": "HARBIN ENGINEERING UNIVERSITY",
-    r"^SHENYANG INST(ITUTE)? OF AUTOMATION": "SHENYANG INSTITUTE OF AUTOMATION (CAS)",
+    r"SHENYANG INST(ITUTE)? OF AUTOMATION": "SHENYANG INSTITUTE OF AUTOMATION (CAS)",   # also "CHINESE ACADEMY OF SHENYANG INSTITUTE OF AUTOMATION"
     r"^ZHEJIANG UNIV": "ZHEJIANG UNIVERSITY",
     # the same Chinese universities under different English translations, and their local institutes
     r"NORTHWEST(ERN)? (POLYTECHNICAL|INDUSTRY|INDUSTRIAL) UNIVERSITY": "NORTHWESTERN POLYTECHNICAL UNIVERSITY",
@@ -261,11 +287,15 @@ KNOWN_PLAYERS = (
 # Regex on the INPADOC event category title / event text, to group events into the families of the lectures
 # (IM_Theory_1 and 2). Check the codes that appear with tls803_legal_event_code before trusting a category.
 LEGAL_EVENT_PATTERNS = {
-    "renewal_fee": r"annual fee|renewal fee|maintenance fee|\bfee paid",
-    "lapse": r"lapse|ceased|expir|non-payment",
+    # matched on "tls803 event_descr | event_category_title | tls231 event_text" (lower case). Negative cases first:
+    # "patent expired due to non-payment of maintenance fees" is a LAPSE, not a renewal; "no opposition filed" is NOT
+    # an opposition. EP renewals are event code PGFP ("annual fee paid to national office", Tutorial 0, example 5).
+    "renewal_fee": r"^(?!.*(?:non-?payment|nonpayment|failure to pay|expired|reminder|not paid|lapse)).*"
+                   r"(?:fee paid|fees paid|payment of (?:annual|renewal|maintenance) fee|\| payment\b|ip right maintenance)",
+    "lapse": r"lapse|ceased|cessation|expir|non-?payment|nonpayment|termination of patent right",
     "withdrawal_refusal": r"withdraw|refus|reject|deemed to be withdrawn",
-    "opposition": r"opposition|opposed",
-    "revocation": r"revoc|invalid|nullit",
+    "opposition": r"^(?!.*\bno opposition\b).*\boppos",
+    "revocation": r"revoc|nullit|invalidat",
     "transfer": r"transfer|assignment|change of owner|change of proprietor|change of applicant",
     "licence": r"licen[cs]e",
     "litigation": r"litigation|court|infringement",

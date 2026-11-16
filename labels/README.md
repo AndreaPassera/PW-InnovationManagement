@@ -80,14 +80,14 @@ reports kappa A vs B, A vs LLM and B vs LLM.
 
 **Task 2 · new samples (after the v4 re-run of 01_extract).** In `outputs/prod/step0/`:
 1. `label_sample_block6.csv` (50 families selected by block 6 alone): **A** fills it and saves it in `labels/` as
-   `block6_prod.csv`; **B** fills the first 25 rows in a copy saved as `second/<name>_block6.csv`.
+   `block6.csv`; **B** fills the first 25 rows in a copy saved as `second/<name>_block6.csv`.
 2. `label_discovery.csv`: A fills only the rows with an empty `is_relevant` and saves the file as
-   `labels/discovery_v4_prod.csv` (keep `sample = discovery`).
-3. Optional, if time allows: `label_sample_sector.csv` (new random sector families) → `labels/sector_v4_prod.csv`,
-   and `label_sample_broad_net.csv` → `labels/broad_net_v4_prod.csv`. They narrow the intervals of precision and recall.
+   `labels/discovery.csv` (keep `sample = discovery`).
+3. Optional, if time allows: `label_sample_sector.csv` (new random sector families) → `labels/sector.csv`,
+   and `label_sample_broad_net.csv` → `labels/broad_net.csv`. They narrow the intervals of precision and recall.
 
 **Adjudication.** Re-run 01_extract: 7.2 writes `outputs/prod/step0/label_disagreements.csv`. A and B discuss each
-family; the agreed label goes in the **main** file (`labels_prod.csv` or `block6_prod.csv`) with `adjudicated: ...`
+family; the agreed label goes in the **main** file (`labels_prod.csv` or `block6.csv`) with `adjudicated: ...`
 in `note`. The files in `second/` are never edited after they are filled (they are the evidence of the kappa).
 Re-run 01_extract and 02_clean.
 

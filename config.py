@@ -245,11 +245,22 @@ GROUP_ALIASES = {
     r"^GENERAL DYNAMICS|^BLUEFIN ROBOTICS": "GENERAL DYNAMICS (BLUEFIN)",
     r"^BOEING": "BOEING",
     r"^LOCKHEED MARTIN": "LOCKHEED MARTIN",
-    r"^THALES": "THALES",
-    r"^ATLAS ELEKTRONIK": "ATLAS ELEKTRONIK",
+    r"^C?THALES": "THALES",                       # "CTHALES" = a PATSTAT typo
+    # Atlas Elektronik is wholly owned by thyssenkrupp Marine Systems (TKMS) since 2017
+    r"ATLAS ELEKTRONIK|^THYSSENKRUPP MARINE|^TKMS": "TKMS (ATLAS ELEKTRONIK)",
+    r"^NAVAL GROUP|^DCNS|^DIRECTION DES CONSTRUCTIONS NAVALES": "NAVAL GROUP",   # DCNS renamed Naval Group in 2017
+    # Hanwha: Daewoo Shipbuilding & Marine Engineering became Hanwha Ocean (2023); Samsung Thales became Hanwha Systems (2015)
+    r"^HANWHA|^DAEWOO SHIPBUILDING|^SAMSUNG THALES": "HANWHA",
+    r"^FMC TECHNOLOGIES|^TECHNIPFMC|^SCHILLING ROBOTICS": "TECHNIPFMC",
+    r"^L3 ?HARRIS|^L 3 HARRIS|^L3 TECHNOLOGIES|^HARRIS CORP": "L3HARRIS",
+    r"^FORUM ENERGY": "FORUM ENERGY TECHNOLOGIES",
     r"^ECA ROBOTICS|^ECA GROUP|^GROUPE GORGE|^EXAIL": "EXAIL (ECA)",
-    r"^FINCANTIERI": "FINCANTIERI",
-    r"^LEONARDO|^FINMECCANICA|^WHITEHEAD ALENIA": "LEONARDO",
+    # CLIENT. Since January 2025 Fincantieri owns Leonardo's underwater business (UAS, ex Whitehead Alenia Sistemi
+    # Subacquei, now WASS Submarine Systems); in 2026 it bought Graal Tech (AUV/ROV), WSense (underwater comms),
+    # NextGeo (marine survey) and Defcomm (USVs). Every Leonardo family in this sector is an underwater one (checked
+    # in v4: 3 families), so Leonardo is grouped with the client; re-check this if the sector changes.
+    r"^FINCANTIERI|^WASS SUBMARINE|^WHITEHEAD|^LEONARDO|^FINMECCANICA|^GRAAL TECH|^WSENSE|^NEXT ?GEOSOLUTIONS"
+    r"|^DEFCOMM": "FINCANTIERI",
     r"^SAIPEM": "SAIPEM",
     r"^HOUSTON MECHATRONICS|^NAUTICUS ROBOTICS": "NAUTICUS ROBOTICS",
     r"^SHELL|^ROYAL DUTCH SHELL": "SHELL",
@@ -280,7 +291,8 @@ GROUP_ALIASES = {
 KNOWN_PLAYERS = (
     "KONGSBERG", "SAAB", "OCEANEERING", "TELEDYNE", "SUBSEA 7", "FUGRO", "HUNTINGTON INGALLS (HYDROID)",
     "GENERAL DYNAMICS (BLUEFIN)", "EXAIL (ECA)", "NAUTICUS ROBOTICS", "HARBIN ENGINEERING UNIVERSITY",
-    "SHENYANG INSTITUTE OF AUTOMATION (CAS)",
+    "SHENYANG INSTITUTE OF AUTOMATION (CAS)", "TKMS (ATLAS ELEKTRONIK)", "NAVAL GROUP", "L3HARRIS",
+    "CHINA STATE SHIPBUILDING (CSSC)",
 )
 
 # ----------------------------------------------------------------------------- legal events (tls231)

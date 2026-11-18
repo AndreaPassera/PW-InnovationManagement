@@ -219,10 +219,11 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 
-!outputs/step0/step0_hand_labeling_labeled.csv
 
 # ---- PW: do not commit bulk PATSTAT extracts (kick-off: commit the queries, not the data)
-outputs/
+outputs/*
+!outputs/figures/
+!outputs/tables/
 *.csv.gz
 !labels/*.csv
 

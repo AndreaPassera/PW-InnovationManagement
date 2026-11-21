@@ -1,0 +1,364 @@
+env: PROD
+sector_name: Underwater drones
+ipr_type: PI
+year_min: 2000
+year_max: 2025
+missing_year: 9999
+truncation_window: 3
+
+block1_cpc: &block1_cpc
+  - B63G2008/002
+  - B63G2008/004
+  - B63G2008/005
+  - B63G2008/007
+  - B63G2008/008
+
+underwater_terms:
+  - '\bunderwater'
+  - '\bsub[\s-]?sea'
+  - '\bundersea'
+  - '\bsubmersible'
+  - '\bsubmarine'
+  - '\bseabed'
+  - '\bsea[\s-]?floor'
+  - '\brovs?\b'
+  - '\bauvs?\b'
+  - '\buuvs?\b'
+
+specific_keywords:
+  - '\b(?:unmanned|uncrewed|autonomous)[\s-]+underwater'
+  - '\b(?:unmanned|uncrewed|autonomous)[\s-]+submersible'
+  - '\bunderwater[\s-]+drone'
+  - '\bsubsea[\s-]+drone'
+  - '\bunderwater[\s-]+glider'
+  - '\bsubsea[\s-]+resident[\s-]+vehicle'
+  - '\bbenthic[\s-]+vehicle'
+  - '\b(?:underwater|seabed)[\s-]+crawler'
+  - '\brobotic[\s-]+fish'
+  - '\bbiomimetic[\s-]+underwater[\s-]+robot'
+  - '\bswarming[\s-]+underwater'
+  - '\bmulti[\s-]?auvs?\b'
+
+generic_keywords:
+  - '\bremotely[\s-]+operated[\s-]+vehicle'
+  - '\bremotely[\s-]+operated[\s-]+underwater'
+  - '\b(?:underwater|subsea|submarine)[\s-]+robot'
+
+block3_cpc:
+  - B63
+  - B25J
+
+block4_cpc:
+  - B63G8/
+  - B63C11/
+
+robot_terms:
+  - '\brobot'
+  - '\bdrones?\b'
+  - '\bremotely[\s-]+operated'
+  - '\brovs?\b'
+  - '\bauvs?\b'
+  - '\buuvs?\b'
+
+block6_object:
+  - '\bunderwater[\s-]+(?:\w+[\s-]+){0,2}vehicles?\b'
+  - '\buninhabited[\s-]+underwater'
+
+block6_task:
+  - '\bpath'
+  - '\broute'
+  - trajector
+  - obstacle
+  - navigat
+  - positioning
+  - 'depth[\s-]+control'
+  - '\bhover'
+  - docking
+  - '\brecover'
+  - formation
+  - autonom
+  - unmanned
+  - uninhabited
+  - uncrewed
+  - '\bswim'
+
+block6_standalone:
+  - '\b(?:underwater|subsea|submarine)[\s-]+(?:\w+[\s-]+){0,2}robots?\b'
+  - '\bunderwater[\s-]+(?:\w+[\s-]+)?glider'
+  - '\bglider[\s-]+robot'
+
+block6_sql_phrases:
+  - underwater vehicle
+  - 'underwater%vehicle'
+  - 'underwater%robot'
+  - 'subsea%robot'
+  - 'submarine%robot'
+  - uninhabited underwater
+  - glider
+
+match_level: family
+
+block5_title_acronyms:
+  - '\brovs?\b'
+  - '\bauvs?\b'
+  - '\buuvs?\b'
+
+block5_sql_patterns:
+  - '% rov%'
+  - 'rov %'
+  - '%(rov%'
+  - '%-rov%'
+  - '% auv%'
+  - 'auv %'
+  - '%(auv%'
+  - '%-auv%'
+  - '% uuv%'
+  - 'uuv %'
+  - '%(uuv%'
+  - '%-uuv%'
+
+exclusion_rules:
+  energy_device: 'turbine|power[\s-]+generat|generator|hydrokinetic|wave[\s-]+(?:energy|power|rotor)|wind[\s-]+(?:power|energy|turbine|farm)|energy[\s-]+(?:supply|transfer|conver)|power[\s-]+plant|hydrogen|transmission[\s-]+of[\s-]+power|propeller'
+
+keep_terms:
+  - '\brobot'
+  - '\brovs?\b'
+  - '\bauvs?\b'
+  - '\buuvs?\b'
+  - '\bdrones?\b'
+  - '\bunmanned'
+  - '\buncrewed'
+  - '\bautonomous'
+  - '\bremotely'
+  - '\bglider'
+  - robotic
+  - '\bcrawler'
+  - '\bvehicle'
+  - '\binspect'
+  - '\bmonitor'
+  - '\bdetect'
+
+grey_zone_patterns:
+  offshore_wind: '\boffshore[\s-]+wind|\bwind[\s-]+(?:turbine|farm|power|park)|\bmonopile'
+  hybrid_surface: '\b(?:unmanned|autonomous|uncrewed)[\s-]+(?:surface|ship|boat)|\busvs?\b|\bsurface[\s-]+(?:vehicle|vessel|drone)|\bsemi[\s-]?submersible|\bmother[\s-]?ship'
+  hybrid_air: '\baerial|\buavs?\b|\baircraft|\bflying|\bamphibious|\bair[\s-]+(?:and[\s-]+)?(?:water|sea)|\bcross[\s-]?(?:domain|medium)|\btrans[\s-]?medi'
+  outside_sea: '\bnuclear|\breactor|\bpipe[\s-]?(?:line)?[\s-]+inspection|\bin[\s-]?pipe|\bsewer|\btank[\s-]+(?:cleaning|inspection)|storage[\s-]+and[\s-]+retrieval|\bwarehouse'
+
+offshore_wind_cpc:
+  - Y02E10/727
+  - F03D13/25
+  - E02B2017/0091
+
+grey_zone_values:
+  - offshore_wind
+  - hybrid_surface
+  - hybrid_air
+  - outside_sea
+  - generic_component
+  - crew_not_stated
+  - other
+
+use_label_corrections: true
+
+label_definition: |
+  An underwater drone is an unmanned vehicle that moves and works under water: remotely operated vehicles (ROVs),
+  autonomous and unmanned underwater vehicles (AUVs, UUVs), underwater gliders, bio-inspired robots (robotic fish),
+  seabed crawlers and hybrid vehicles that operate under water. The sector includes the drone itself, its parts
+  (hull, propulsion, buoyancy, power, sensors, manipulators, tools carried or operated by it), its infrastructure
+  (launch and recovery, docking, charging, tethers) and the methods to control, navigate and coordinate it.
+
+broad_ipc:
+  - B63G8/00
+  - B63G8/08
+  - B63G8/14
+  - G01S15/89
+  - H04B11/00
+  - G01C13/00
+
+broad_cpc: *block1_cpc
+
+broad_keywords:
+  - underwater drone
+  - subsea drone
+  - underwater vehicle
+  - unmanned underwater vehicle
+  - uncrewed underwater vehicle
+  - autonomous underwater vehicle
+  - remotely operated vehicle
+  - remotely operated underwater
+  - unmanned underwater
+  - autonomous underwater
+  - uncrewed underwater
+  - unmanned submersible
+  - autonomous submersible
+  - uncrewed submersible
+  - underwater glider
+  - subsea robot
+  - underwater robot
+  - submarine robot
+  - subsea resident vehicle
+  - benthic vehicle
+  - hovering autonomous underwater
+  - underwater crawler
+  - seabed crawler
+  - biomimetic underwater robot
+  - robotic fish
+  - swarming underwater
+  - multi-auv
+
+focal_family_ids:
+  - 55819443
+  - 78422041
+  - 74782746
+  - 59856089
+  - 58166573
+
+sector_description: |
+  Technology concerning unmanned and uncrewed underwater vehicles,
+  including autonomous underwater vehicles (AUVs) and remotely operated
+  vehicles (ROVs). These systems are designed to operate underwater
+  without a human operator on board and may perform autonomous or
+  remotely controlled navigation, exploration, inspection, monitoring,
+  mapping and maintenance activities.
+
+  The technology includes underwater propulsion, guidance and control,
+  navigation and positioning systems, obstacle avoidance, underwater
+  communication, sensors, robotic manipulation and docking systems.
+  Applications include subsea infrastructure inspection, oceanographic
+  research, offshore operations, seabed exploration and underwater
+  intervention.
+
+seed: 42
+output_dir: outputs
+sample_size: 100
+broad_sample_size: 50
+label_dir: labels
+label_col: is_relevant
+label_col_broad: is_relevant_broad
+block6_sample_size: 50
+
+precision_samples:
+  - sector
+  - block6
+
+validation_exclude_files:
+  - labels_test.csv
+
+invalid_appln_id: 900000000
+chunk: 5000
+sbert_model: graziasveva93/sbert-adapt-ub
+fetch_publications: true
+fetch_citation_detail: true
+fetch_citation_cpc: true
+fetch_inventors: true
+fetch_legal_events: true
+fetch_wipo_fields: true
+fetch_benchmark: true
+
+benchmark_cpc:
+  - B63
+
+legal_suffixes:
+  - CO LTD
+  - CO LIMITED
+  - COMPANY LIMITED
+  - COMPANY
+  - CORPORATION
+  - CORP
+  - INCORPORATED
+  - INC
+  - LIMITED
+  - LTD
+  - LLC
+  - PLC
+  - GMBH
+  - AG
+  - SPA
+  - SRL
+  - SAS
+  - SA
+  - AS
+  - ASA
+  - AB
+  - OY
+  - BV
+  - NV
+  - KK
+  - KABUSHIKI KAISHA
+  - CO
+  - GROUP CO
+  - HOLDINGS
+  - HOLDING
+
+legal_prefixes:
+  - KABUSHIKI KAISHA
+  - THE
+
+group_aliases:
+  '^KONGSBERG': KONGSBERG
+  '^SAAB': SAAB
+  '^OCEANEERING': OCEANEERING
+  '^TELEDYNE': TELEDYNE
+  '^SUBSEA ?7': SUBSEA 7
+  '^FUGRO': FUGRO
+  '^HUNTINGTON INGALLS|^HYDROID': 'HUNTINGTON INGALLS (HYDROID)'
+  '^GENERAL DYNAMICS|^BLUEFIN ROBOTICS': 'GENERAL DYNAMICS (BLUEFIN)'
+  '^BOEING': BOEING
+  '^LOCKHEED MARTIN': LOCKHEED MARTIN
+  '^C?THALES': THALES
+  'ATLAS ELEKTRONIK|^THYSSENKRUPP MARINE|^TKMS': 'TKMS (ATLAS ELEKTRONIK)'
+  '^NAVAL GROUP|^DCNS|^DIRECTION DES CONSTRUCTIONS NAVALES': NAVAL GROUP
+  '^HANWHA|^DAEWOO SHIPBUILDING|^SAMSUNG THALES': HANWHA
+  '^FMC TECHNOLOGIES|^TECHNIPFMC|^SCHILLING ROBOTICS': TECHNIPFMC
+  '^L3 ?HARRIS|^L 3 HARRIS|^L3 TECHNOLOGIES|^HARRIS CORP': L3HARRIS
+  '^FORUM ENERGY': FORUM ENERGY TECHNOLOGIES
+  '^ECA ROBOTICS|^ECA GROUP|^GROUPE GORGE|^EXAIL': 'EXAIL (ECA)'
+  '^FINCANTIERI|^WASS SUBMARINE|^WHITEHEAD|^LEONARDO|^FINMECCANICA|^GRAAL TECH|^WSENSE|^NEXT ?GEOSOLUTIONS|^DEFCOMM': FINCANTIERI
+  '^SAIPEM': SAIPEM
+  '^HOUSTON MECHATRONICS|^NAUTICUS ROBOTICS': NAUTICUS ROBOTICS
+  '^SHELL|^ROYAL DUTCH SHELL': SHELL
+  '^EQUINOR|^STATOIL': EQUINOR
+  '^CNOOC|^CHINA NATIONAL OFFSHORE OIL|^OFFSHORE OIL ENGINEERING': CNOOC
+  'CHINA STATE SHIPBUILDING|CHINA SHIPBUILDING|\bCSSC\b|\bCSIC\b|^CHINA SHIP SCIENTIFIC RESEARCH CENT': 'CHINA STATE SHIPBUILDING (CSSC)'
+  '^HARBIN ENG|HARBIN ENGINEERING UNIVERSITY': HARBIN ENGINEERING UNIVERSITY
+  'SHENYANG INST(ITUTE)? OF AUTOMATION': 'SHENYANG INSTITUTE OF AUTOMATION (CAS)'
+  '^ZHEJIANG UNIV': ZHEJIANG UNIVERSITY
+  'NORTHWEST(ERN)? (POLYTECHNICAL|INDUSTRY|INDUSTRIAL) UNIVERSITY': NORTHWESTERN POLYTECHNICAL UNIVERSITY
+  '^SHANGHAI (JIAO ?TONG|TRAFFIC) UNIVERSITY': SHANGHAI JIAO TONG UNIVERSITY
+  '^HUANENG|^HUA ENERGY INTERNATIONAL ELECTRIC POWER|INTERNATIONAL ELECTRIC POWER JIANGSU ENERGY|^XIAN THERMAL POWER RESEARCH|^XIAN INSTITUTE OF THERMAL RESEARCH': CHINA HUANENG GROUP
+  '^CHINA THREE GORGES(?! UNIVERSITY)|^THREE GORGES(?! UNIVERSITY)|^YANGTZE RIVER THREE GORGES|^CHINA YANGTZE POWER': CHINA THREE GORGES
+  '^(CHINA )?THREE GORGES UNIVERSITY': CHINA THREE GORGES UNIVERSITY
+  '^BAE SYSTEMS': BAE SYSTEMS
+  '^FUNDACION TECNALIA': TECNALIA
+  '^SIEMENS': SIEMENS
+  '^KOREA INST(ITUTE)? OF OCEAN': KIOST
+  '^MITSUBISHI HEAVY': MITSUBISHI HEAVY INDUSTRIES
+  '^KAWASAKI': KAWASAKI HEAVY INDUSTRIES
+
+known_players:
+  - KONGSBERG
+  - SAAB
+  - OCEANEERING
+  - TELEDYNE
+  - SUBSEA 7
+  - FUGRO
+  - 'HUNTINGTON INGALLS (HYDROID)'
+  - 'GENERAL DYNAMICS (BLUEFIN)'
+  - 'EXAIL (ECA)'
+  - NAUTICUS ROBOTICS
+  - HARBIN ENGINEERING UNIVERSITY
+  - 'SHENYANG INSTITUTE OF AUTOMATION (CAS)'
+  - 'TKMS (ATLAS ELEKTRONIK)'
+  - NAVAL GROUP
+  - L3HARRIS
+  - 'CHINA STATE SHIPBUILDING (CSSC)'
+
+legal_event_patterns:
+  renewal_fee: '^(?!.*(?:non-?payment|nonpayment|failure to pay|expired|reminder|not paid|lapse)).*(?:fee paid|fees paid|payment of (?:annual|renewal|maintenance) fee|\| payment\b|ip right maintenance)'
+  lapse: 'lapse|ceased|cessation|expir|non-?payment|nonpayment|termination of patent right'
+  withdrawal_refusal: 'withdraw|refus|reject|deemed to be withdrawn'
+  opposition: '^(?!.*\bno opposition\b).*\boppos'
+  revocation: 'revoc|nullit|invalidat'
+  transfer: 'transfer|assignment|change of owner|change of proprietor|change of applicant'
+  licence: 'licen[cs]e'
+  litigation: 'litigation|court|infringement'

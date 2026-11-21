@@ -1,6 +1,4 @@
 """Step 0: sector definition and extraction for underwater drones (PATSTAT on TIP).
-
-Run from the repository root:  python src/01_extract.py [--retrieval] [--no-sbert] [--no-label-samples]
 """
 from __future__ import annotations
 

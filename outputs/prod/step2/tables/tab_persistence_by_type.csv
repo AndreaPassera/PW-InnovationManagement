@@ -1,0 +1,7 @@
+type,applicants,share_active_3plus_years,share_one_family
+firm,1690,0.12,0.636
+government / non-profit,386,0.168,0.596
+hospital,2,0.0,0.5
+individual,1250,0.011,0.867
+university,776,0.276,0.503
+unknown,1071,0.026,0.776

@@ -1,0 +1,11 @@
+factor,claim,figure,source,url,accessed
+Political,Defence spending at a record high,"World military expenditure 2,771 bn USD in 2025 (constant 2024 USD), +2.9% on 2024, +41% on 2015","SIPRI Military Expenditure Database (2026 release, v1.2)",https://www.sipri.org/databases/milex,2026-11-22
+Political,European rearmament,Europe (incl. Russia) +17% to 693 bn USD in 2024; China +7.0% to 314 bn,SIPRI press release 28.04.2025,https://www.sipri.org/media/press-release/2025/global-military-expenditure-surges-new-record,2026-11-22
+Political,Chinese patent subsidies ended,application subsidies abolished by end of June 2021,CNIPA notice 27.01.2021,https://cset.georgetown.edu/publication/notice-of-the-china-national-intellectual-property-administration-on-more-strictly-regulating-patent-applications/,2026-11-22
+Political,Chinese industrial policy,ocean engineering equipment and high-tech ships a Made in China 2025 priority,IEA policy database,https://www.iea.org/policies/15670-made-in-china-2025,2026-11-22
+Political,Export controls on UUVs,"submersible vehicles in Annex I (cat. 8A) of EU dual-use Reg. 2021/821, based on Wassenaar",EUR-Lex,https://eur-lex.europa.eu/eli/reg/2021/821/oj/eng,2026-11-22
+Economic,Market growth,2024 market 4.2-5.1 bn USD; forecast CAGR 8-17% (see market_size.csv),market reports,,2026-11-22
+Economic,Consolidation by defence primes,"Fincantieri: WASS 2025, NextGeo/WSense/Graal Tech/Defcomm 2026; underwater revenue 1.1 bn EUR pro-forma 2026",Fincantieri / Naval News,https://www.navalnews.com/naval-news/2026/07/fincantieri-acquires-four-companies-to-expand-underwater-drone-business/,2026-11-22
+Economic,Offshore wind O&M demand,ROVs/AUVs increasingly used in offshore wind inspection and maintenance,"Kanashiro et al. 2025, Sustainability 18(1):2",https://doi.org/10.3390/su18010002,2026-11-22
+Social,Ocean monitoring and diver safety,AUVs with subsea stations for frequent IMR tasks; replacing manned operations,"Aalborg Univ., Offshore Subsea IMR Operations review",https://vbn.aau.dk/da/publications/offshore-subsea-imr-operations-review-of-the-automation-potential/,2026-11-22
+Technological,Open underwater comms standard,"JANUS / STANAG 4748, NATO standard since 24.03.2017, open source",NATO,https://www.nato.int/cps/en/natohq/news_143247.htm,2026-11-22

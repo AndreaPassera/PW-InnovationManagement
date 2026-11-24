@@ -1,0 +1,14 @@
+subclass,families · all,families · without b6-only,families · international,applications,"CPC title (official, verify)",role in the sector (our reading)
+B63G,0.17068824671748303,0.19656787944992693,0.2620276593224355,0.19573737321598422,Offensive or defensive arrangements on vessels; mine-laying; mine-sweeping; submarines; aircraft carriers,submarines and unmanned underwater vehicles
+B63C,0.14975451027360337,0.17688814976648803,0.09602064084340205,0.1334774528533965,"Launching, hauling-out or dry-docking of vessels; life-saving in water; equipment for dwelling or working underwater; means for searching for or salvaging underwater objects","underwater work, launch and recovery"
+G05D,0.08191419393388369,0.08186067435696516,0.03663231461738925,0.06688592191234366,Systems for controlling or regulating non-electric variables,"navigation, path and depth control"
+B63B,0.06974405665933113,0.07089839685537015,0.11969616204690835,0.0851852547813796,Ships or other waterborne vessels; equipment for shipping,hulls and ship equipment
+B63H,0.04442151788810501,0.04953793074712956,0.036302490523572616,0.04168736490075192,Marine propulsion or steering,propulsion and steering
+G01S,0.04426805129370762,0.03594949601997079,0.038646795782989816,0.04275462463685917,Radio direction-finding; radio navigation; determining distance or velocity by use of radio waves; locating or presence-detecting by reflection of waves; analogous arrangements using other waves (sonar),sonar and positioning
+G01C,0.04145025949918552,0.03315329000047101,0.018459414238332153,0.03491494316230099,"Measuring distances, levels or bearings; surveying; navigation; gyroscopic instruments; photogrammetry",navigation and surveying
+B25J,0.0372288961370107,0.038054197698114606,0.02079187396351576,0.03164926975948617,Manipulators; chambers provided with manipulation devices,manipulator arms
+G05B,0.02848430606783829,0.028627371639241075,,0.021154973658748195,Control or regulating systems in general; monitoring or testing arrangements for such systems,control systems
+G06F,0.02286841307724363,0.02036903584381329,,0.016704611722226217,Electric digital data processing,"computing, simulation"
+G01N,0.01677978776725794,0.01456059807320935,0.017631707533759776,0.01637651501139171,Investigating or analysing materials (chemical or physical properties),water and material sensing
+G06T,0.013099073758381638,,,0.011705150941436801,"Image data processing or generation, in general",underwater image processing
+Other,0.27929868692696863,0.24205348023226364,0.26330179459843644,0.3017665434436949,,

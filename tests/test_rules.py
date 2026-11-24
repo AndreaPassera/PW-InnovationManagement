@@ -5,7 +5,7 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 import config as C  # noqa: E402
 from pw_utils import (apply_blocks, applicant_type, clean_country, legal_event_flags, normalise_name,  # noqa: E402
@@ -37,7 +37,11 @@ def test_block2_specific_keywords_with_hyphens_and_spaces():
 
 
 def test_block3_generic_keyword_title_or_abstract_with_b63_b25j():
-    assert apply_blocks(family("Remotely-operated vehicle for pipes"))["b3_generic"].iat[0]
+    assert apply_blocks(family("Remotely-operated vehicle for subsea pipes"))["b3_generic"].iat[0]
+    assert apply_blocks(family("Remotely operated vehicle", "", ["B63C11/00"]))["b3_generic"].iat[0]          # B63 code = context
+    # v5: no water / marine context -> not block 3 (warehouse robots call their grid vehicles "remotely operated vehicles")
+    assert not apply_blocks(family("Remotely operated vehicle for a storage system", "picks bins from a grid", ["B65G1/04"]))["b3_generic"].iat[0]
+    assert not apply_blocks(family("Displacement mechanism", "a remotely operated vehicle on rails", ["B25J5/00"]))["b3_generic"].iat[0]
     # in the abstract only: needs a B63 or B25J code
     assert not apply_blocks(family("Subsea valve", "operated by a remotely operated vehicle", ["F16K1/00"]))["b3_generic"].iat[0]
     assert apply_blocks(family("Gripper", "for an underwater robot", ["B25J15/00"]))["b3_generic"].iat[0]
@@ -105,6 +109,24 @@ def test_wilson_interval():
     ("CHINESE ACADEMY OF SHENYANG INSTITUTE OF AUTOMATION", "SHENYANG INSTITUTE OF AUTOMATION (CAS)"),
     ("NO 719 RESEARCH INSTITUTE CHINA STATE SHIPBUILDING", "CHINA STATE SHIPBUILDING (CSSC)"),
     ("NASA", "NASA"),
+    # aliases added after the Step 2 screens
+    ("THYSSEN KRUPP AG", "TKMS (ATLAS ELEKTRONIK)"),
+    ("ATLAS ELECTRONIK GMBH", "TKMS (ATLAS ELEKTRONIK)"),
+    ("Blue Atlas Robotics ApS", "BLUE ATLAS ROBOTICS APS"),   # not absorbed by the Atlas rule
+    ("DCN", "NAVAL GROUP"),
+    ("iXblue SAS", "EXAIL (ECA)"),
+    ("HARRIS CORPORATION", "L3HARRIS"),
+    ("Aramco Services Company", "SAUDI ARAMCO"),
+    ("沙特阿拉伯石油公司", "SAUDI ARAMCO"),
+    ("CGGVERITAS SERVICES SA", "CGG (VIRIDIEN)"),
+    ("Schlumberger Technology Corporation", "SLB (SCHLUMBERGER)"),
+    ("OneSubsea IP UK Limited", "ONESUBSEA"),
+    ("FAIRFIELD INDUSTRIES INCORPORATED", "MAGSEIS FAIRFIELD (TGS)"),
+    ("The United States of America, as represented by the Secretary of the Navy", "US NAVY"),
+    ("PLA NAVY SUBMARINE ACADEMY", "PLA NAVY SUBMARINE ACADEMY"),
+    ("CGN POWER CO LTD", "CGN (CHINA GENERAL NUCLEAR POWER)"),
+    ("SHANGHAI CRRC SMD MARINE EQUIPMENT COMPANY", "CRRC"),
+    ("LIAOCHENG POWER SUPPLY COMPANY OF STATE GRID SHANDONG ELECTRIC POWER COMPANY", "STATE GRID (SGCC)"),
 ])
 def test_harmonisation(raw, group):
     assert to_group(normalise_name(raw)) == group
@@ -211,3 +233,46 @@ def test_legal_prefix_and_applicant_type_order():
     assert applicant_type("COMPANY GOV NON-PROFIT", "X") == "firm"
     assert applicant_type("COMPANY UNIVERSITY", "X") == "university"
     assert applicant_type("HOSPITAL", "X") == "hospital"
+
+
+def test_freeze_requirements_pins_installed_versions(tmp_path):
+    from pw_utils import freeze_requirements
+    import pandas
+    out = tmp_path / "requirements.txt"
+    lines = freeze_requirements(out, packages=("pandas", "surely-not-installed-pkg"))
+    text = out.read_text()
+    assert f"pandas=={pandas.__version__}" in text
+    assert "# surely-not-installed-pkg: not installed" in text
+    assert lines[0].startswith("# Generated")
+
+
+def test_pairwise_prf_tutorial1_example():
+    # Tutorial 1 nb 11 §2.4: {NOKIA, NOKIA CORP, NOKIA OYJ} + NOKIAN TYRES, all four merged -> P 0.5, R 1, F1 0.67
+    from pw_utils import pairwise_prf, harmonisation_scores
+    gold = [1, 1, 1, 2]
+    s = pairwise_prf(gold, ["A", "A", "A", "A"])
+    assert s["precision"] == 0.5 and s["recall"] == 1 and round(s["F1"], 2) == 0.67
+    perfect = harmonisation_scores(gold, ["x", "x", "x", "y"])
+    assert perfect["F1"] == 1 and perfect["V-measure"] == 1 and perfect["groups found"] == 2
+
+
+def test_block4_robot_terms():
+    # block 4 needs a neighbouring code AND a robot term; "unmanned" alone does not count (v6 tested and rejected:
+    # under B63G8/ and B63C11/ it mostly selects unmanned surface boats and crewed-submarine equipment)
+    assert apply_blocks(family("Hull cleaning ROV", "", ["B63G8/00"]))["b4_neighbour"].iat[0]
+    assert apply_blocks(family("Diver assistance robot", "", ["B63C11/52"]))["b4_neighbour"].iat[0]
+    assert not apply_blocks(family("Unmanned rescue boat", "", ["B63C11/00"]))["b4_neighbour"].iat[0]
+    assert not apply_blocks(family("Submarine with air-independent propulsion", "", ["B63G8/08"]))["b4_neighbour"].iat[0]
+
+
+def test_applicant_type_from_name_v7():
+    # psn_sector empty: public bodies and firms recognised from the name, universities and institutes first
+    assert applicant_type(None, "CHINA STATE SHIPBUILDING (CSSC)") == "firm"
+    assert applicant_type(None, "TIANJIN WANGYUAN INTELLIGENT TECHNOLOGY") == "firm"
+    assert applicant_type(None, "US NAVY") == "government / non-profit"
+    assert applicant_type(None, "GUANGZHOU MARINE GEOLOGICAL SURVEY") == "government / non-profit"
+    assert applicant_type(None, "HARBIN ENGINEERING UNIVERSITY") == "university"
+    assert applicant_type(None, "SHENYANG INSTITUTE OF AUTOMATION (CAS)") == "government / non-profit"
+    assert applicant_type(None, "ZHANG WEI") == "unknown"
+    assert applicant_type("INDIVIDUAL", "SOME ENGINEERING") == "individual"   # psn_sector still decides first
+    assert to_group(normalise_name("DEEPFAR OCEAN TECHNOLOGY")) == "DEEPINFAR OCEAN TECHNOLOGY"

@@ -94,3 +94,9 @@ Re-run 01_extract and 02_clean.
 **What goes in the technical appendix.** Number of families labelled by humans and by the LLM, kappa with its
 interpretation (Landis & Koch 1977: 0.61-0.80 substantial, > 0.80 almost perfect), the number of adjudicated
 families, and the stratified precision and recall of `step0_summary.csv`.
+
+## gold/
+
+`gold/PATSTAT_500_label_datav4.csv`: the gold standard of Tutorial 1 (3,192 PATSTAT applicant names grouped by hand
+into 481 organisations, columns `Group`, `comp`). Not a label of our sector: `02_clean` §7.2.1 uses it to measure the
+precision, recall and F1 of our name harmonisation against the baselines of the tutorial.

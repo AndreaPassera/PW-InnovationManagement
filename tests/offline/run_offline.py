@@ -6,6 +6,7 @@ It catches wrong PATSTAT column names, broken query chains and pandas errors bef
 replace the first run on TIP TEST, where the real SQL is executed. The benchmarks of 02_clean (sub-queries) are skipped.
 """
 import re
+import os
 import shutil
 import sys
 import types
@@ -20,8 +21,12 @@ RUN = HERE / "run"
 shutil.rmtree(RUN, ignore_errors=True)
 RUN.mkdir()
 for f in ["config.py", "pw_utils.py"]:
-    shutil.copy(SRC / f, RUN / f)
+    shutil.copy(SRC / "src" / f, RUN / f)
+shutil.copytree(SRC / "config", RUN / "config")
+os.environ["PW_ROOT"] = str(RUN)       # config.ROOT -> the run folder: labels/ and outputs/ of the test stay here
 (RUN / "labels").mkdir()
+if (SRC / "labels" / "gold").exists():   # the Tutorial 1 gold standard (02_clean, 7.2.1) is real data: copy it
+    shutil.copytree(SRC / "labels" / "gold", RUN / "labels" / "gold")
 
 sys.path.insert(0, str(HERE))
 import fakelibs as F  # noqa: E402
@@ -139,10 +144,11 @@ names = [("KONGSBERG MARITIME AS", "COMPANY", "NO"), ("Saab Seaeye Ltd", "COMPAN
          ("Oceaneering International, Inc.", "COMPANY GOV NON-PROFIT", "US"), ("Zhang Wei", "INDIVIDUAL", "  ")]
 for i, (n, sec, c) in enumerate(names):
     persons.append(dict(person_id=i + 1, person_name=n, psn_id=100 + i, psn_name=n.upper(), psn_sector=sec,
-                        han_id=200 + i, han_name=None, person_ctry_code=c))
+                        han_id=200 + i, han_name=None, person_ctry_code=c, nuts=None, nuts_level=None))
 for i in range(30):
     persons.append(dict(person_id=100 + i, person_name=f"INVENTOR {i}", psn_id=500 + i, psn_name=f"INVENTOR {i}",
-                        psn_sector="INDIVIDUAL", han_id=0, han_name=None, person_ctry_code=rng.choice(["CN", "US", "NO", "  "])))
+                        psn_sector="INDIVIDUAL", han_id=0, han_name=None, person_ctry_code=rng.choice(["CN", "US", "NO", "  "]),
+                        nuts=rng.choice(["NO08", "NO081", "ITC11", None]), nuts_level=rng.choice([2, 3, None])))
 pid = 0
 for _, a in apps_df.iterrows():
     links.append(dict(person_id=int(rng.integers(1, len(names) + 1)), appln_id=a.appln_id, applt_seq_nr=1, invt_seq_nr=0))
@@ -246,7 +252,7 @@ def notebook_code(path):
 
 
 def run(name):
-    code = notebook_code(SRC / name)
+    code = notebook_code(SRC / "notebooks" / name)
     print(f"\n{'=' * 30} {name}")
     g = {"display": display, "__name__": "__main__"}
     exec(compile(code, name, "exec"), g)

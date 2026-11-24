@@ -1,0 +1,56 @@
+source,url,file,accessed
+"SIPRI Military Expenditure Database, v1.2 (2026 release)",https://www.sipri.org/databases/milex,defence_spending.csv,2026-11-22
+"State Council of the PRC, Outline of the National Intellectual Property Strategy (WIPO Lex)",https://www.wipo.int/wipolex/en/legislation/details/859,events.csv,2026-11-23
+"Ball (2016), The Fed and Lehman Brothers, NBER WP 22410",https://www.nber.org/papers/w22410,events.csv,2026-11-23
+"U.S. EIA, Today in Energy",https://www.eia.gov/todayinenergy/detail.php?id=19451,events.csv,2026-11-23
+IEA policy database,https://www.iea.org/policies/15670-made-in-china-2025,events.csv,2026-11-22
+NATO,https://www.nato.int/cps/en/natohq/news_143247.htm,events.csv,2026-11-22
+Fugro,https://fugro.com/news/press-releases/2019/fugro-becomes-sole-shareholder-of-seabed-geosolutions,events.csv,2026-11-22
+"WHO Director-General, media briefing 11 March 2020",https://www.who.int/news-room/speeches/item/who-director-general-s-opening-remarks-at-the-media-briefing-on-covid-19---11-march-2020,events.csv,2026-11-23
+CNIPA (via CSET translation),https://cset.georgetown.edu/publication/notice-of-the-china-national-intellectual-property-administration-on-more-strictly-regulating-patent-applications/,events.csv,2026-11-22
+SEC prospectus Technip Energies,https://www.sec.gov/Archives/edgar/data/1792045/000114036121005004/nt10016372x14_ex99-1.htm,events.csv,2026-11-22
+EUR-Lex / DLA Piper,https://eur-lex.europa.eu/eli/reg/2021/821/oj/eng,events.csv,2026-11-22
+"European Council, conclusions of 24 February 2022 (EUCO 18/22)",https://data.consilium.europa.eu/doc/document/ST-18-2022-INIT/en/pdf,events.csv,2026-11-23
+Danish Energy Agency,https://ens.dk/en/node/3981,events.csv,2026-11-23
+Unified Patent Court,https://www.unified-patent-court.org,events.csv,2026-11-22
+Fincantieri IR,https://www.fincantieri.com/en/investor-relations/fincantieri-in-borsa/capital-increase/Fincantieri-signs-an-agreement-to-acquire-Leonardo-S-p-A-s-Underwater-Armament-Systems--business,events.csv,2026-11-22
+Leonardo,https://www.leonardo.com/en/press-release-detail/-/detail/14-01-2025-leonardo-completed-the-sale-of-its-underwater-business-to-fincantieri,events.csv,2026-11-22
+Naval News (Fincantieri release),https://www.navalnews.com/naval-news/2026/07/fincantieri-acquires-four-companies-to-expand-underwater-drone-business/,events.csv,2026-11-22
+"EU Industrial R&D Investment Scoreboard, panel 2003-2024 v2.0 (JRC); amounts in EUR m",https://knowledge-for-policy.ec.europa.eu/data_en,firm_financials.csv,2026-11-22
+"Kongsberg Annual Report 2024, key figures",https://www.kongsberg.com/globalassets/kongsberg-asa/5.-investor-relations/1.3.-reports-and-presentations/1.3.1.-annual-report/annual-report-2024/annual-report-2024-eng.pdf,firm_financials.csv,2026-11-22
+"Kongsberg Annual Report 2024 (revenue, employees); Q4 2024 report (self-financed product development MNOK 2,745)",https://www.kongsberg.com/globalassets/kongsberg-asa/5.-investor-relations/1.3.-reports-and-presentations/1.3.1.-annual-report/annual-report-2024/annual-report-2024-eng.pdf,firm_financials.csv,2026-11-22
+"LIG Nex1 income statement (stockanalysis.com, from audited IFRS accounts)",https://stockanalysis.com/quote/krx/079550/financials,firm_financials.csv,2026-11-22
+Oceaneering 10-K FY2024 (revenue); 2023 Annual Report (employees),https://www.sec.gov/Archives/edgar/data/0000073756/000007375625000016/oii-20241231.htm,firm_financials.csv,2026-11-22
+Oceaneering 10-K FY2024,https://www.sec.gov/Archives/edgar/data/0000073756/000007375625000016/oii-20241231.htm,firm_financials.csv,2026-11-22
+TechnipFMC Q4 2024 results (revenue); R&D from the 10-K via macrotrends,https://www.businesswire.com/news/home/20250227252951/en,firm_financials.csv,2026-11-22
+Golden list of AUV patents,https://golden.com/query/list-of-autonomous-underwater-vehicle-patents-D8PPB,flagship_recall.csv,
+Fugro press release,https://fugro.com/news/press-releases/2019/fugro-becomes-sole-shareholder-of-seabed-geosolutions,group_ownership.csv,2026-11-22
+SEC Technip Energies F-1,https://www.sec.gov/Archives/edgar/data/1792045/000114036121004280/nt10016372x16_f1a.htm,group_ownership.csv,2026-11-22
+Leonardo press release,https://www.leonardo.com/en/press-release-detail/-/detail/14-01-2025-leonardo-completed-the-sale-of-its-underwater-business-to-fincantieri,group_ownership.csv,2026-11-22
+Naval News,https://www.navalnews.com/naval-news/2026/07/fincantieri-acquires-four-companies-to-expand-underwater-drone-business/,group_ownership.csv,2026-11-22
+EPO Annual Report 2017; epi Information 3/2017; Mewburn Ellis on EPO 2024 review,https://report-archive.epo.org/about-us/annual-reports-statistics/annual-report/2017/statistics/searches.html,ip_system_facts.csv,2026-11-22
+EPO Annual Report 2018,https://report-archive.epo.org/about-us/annual-reports-statistics/annual-report/2018/statistics/searches.html,ip_system_facts.csv,2026-11-22
+WIPO Patent Judicial Guide China 4.1.1; IAM,https://wipo.int/patent-judicial-guide/en/full-guide/china/4.1.1,ip_system_facts.csv,2026-11-22
+Managing IP,https://www.managingip.com/article/2a5bqo2drurt0bxl7aaud/a-closer-look-at-the-changes-to-chinas-design-patent-system,ip_system_facts.csv,2026-11-22
+MarkNtel (Step 0 literature note),,market_players.csv,
+Fincantieri / Naval News,https://www.navalnews.com/naval-news/2026/07/fincantieri-acquires-four-companies-to-expand-underwater-drone-business/,market_players.csv,2026-11-22
+IMARC Group,https://imarcgroup.com/underwater-drone-market,market_size.csv,2026-11-22
+Global Market Insights,https://www.gminsights.com/industry-analysis/underwater-drones-market,market_size.csv,2026-11-22
+Global Market Insights,https://www.giiresearch.com/report/gmi1801875-underwater-drones-market-opportunity-growth.html,market_size.csv,2026-11-22
+Market Research Future,https://www.marketresearchfuture.com/reports/underwater-drone-market/market-analysis,market_size.csv,2026-11-22
+Expert Market Research,https://expertmarketresearch.com/reports/underwater-drones-market,market_size.csv,2026-11-22
+TechSci Research,https://www.techsciresearch.com/report/underwater-drone-market/19224.html,market_size.csv,2026-11-22
+TechSci Research (older edition),https://www.gii.co.jp/report/tsci1532694-underwater-drone-market-global-industry-size-share.html,market_size.csv,2026-11-22
+Fortune Business Insights,https://fortunebusinessinsights.com/unmanned-underwater-vehicles-uuv-market-102527,market_size.csv,2026-11-22
+MarketsandMarkets,https://marketsandmarkets.com/Market-Reports/underwater-robot-market-214387128.html,market_size.csv,2026-11-22
+MarketsandMarkets,https://marketsandmarkets.com/Market-Reports/autonomous-underwater-vehicles-market-141855626.html,market_size.csv,2026-11-22
+BCC Research,https://www.bccresearch.com/market-research/instrumentation-and-sensors/autonomous-underwater-vehicles-report.html,market_size.csv,2026-11-22
+Mordor Intelligence,https://marketresearch.com/Mordor-Intelligence-LLP-v4018/Autonomous-Underwater-Vehicles-Share-Trends-37692029,market_size.csv,2026-11-22
+Fincantieri (via Il Sole 24 Ore),https://en.ilsole24ore.com/art/fincantieri-crea-polo-subacquea-8-aziende-11-mld-ricavi-e-200-mln-ebitda-AJcAmK,market_size.csv,2026-11-22
+"SIPRI Military Expenditure Database (2026 release, v1.2)",https://www.sipri.org/databases/milex,pest_sources.csv,2026-11-22
+SIPRI press release 28.04.2025,https://www.sipri.org/media/press-release/2025/global-military-expenditure-surges-new-record,pest_sources.csv,2026-11-22
+CNIPA notice 27.01.2021,https://cset.georgetown.edu/publication/notice-of-the-china-national-intellectual-property-administration-on-more-strictly-regulating-patent-applications/,pest_sources.csv,2026-11-22
+EUR-Lex,https://eur-lex.europa.eu/eli/reg/2021/821/oj/eng,pest_sources.csv,2026-11-22
+market reports,,pest_sources.csv,2026-11-22
+"Kanashiro et al. 2025, Sustainability 18(1):2",https://doi.org/10.3390/su18010002,pest_sources.csv,2026-11-22
+"Aalborg Univ., Offshore Subsea IMR Operations review",https://vbn.aau.dk/da/publications/offshore-subsea-imr-operations-review-of-the-automation-potential/,pest_sources.csv,2026-11-22

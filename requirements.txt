@@ -1,10 +1,20 @@
-# epo.tipdata (PATSTAT client) is preinstalled on TIP
-pandas>=1.5
-numpy>=1.23
-matplotlib>=3.6
-sqlalchemy>=1.4
-scikit-learn>=1.1
-scipy>=1.7
-sentence-transformers>=2.2
-pytest>=7
-umap-learn>=0.5
+# Exact versions of the environment the pipeline ran in: EPO TIP, Python 3.12.11 (recorded by 01_extract in
+# outputs/prod/step0/environment.txt, PROD run of 2026-11-22). Fresh environment, Python 3.12:
+#     pip install -r requirements.txt
+# On TIP the scientific packages and the PATSTAT client are preinstalled: do NOT reinstall this file there, install
+# only the text models (pip install sentence-transformers umap-learn bertopic).
+pandas==2.3.1
+numpy==2.2.6
+matplotlib==3.10.3
+scipy==1.16.0
+scikit-learn==1.7.1
+networkx==3.5
+PyYAML==6.0.2
+SQLAlchemy==2.0.41
+pytest==9.1.1
+# text models: 01_extract Section 8 (retrieval, UMAP maps) and 03_landscape 2.4.2 (encoding comparison, BERTopic)
+sentence-transformers==6.2.0
+umap-learn==0.5.12
+bertopic==0.17.4
+# epo-tipdata-patstat==0.1.22  (PATSTAT client, preinstalled on TIP only: needed by 01_extract and 02_clean;
+#                               03_landscape runs anywhere from the step1 tables)

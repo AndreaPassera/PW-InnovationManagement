@@ -1,0 +1,14 @@
+applicant,families,country,type,rank,rank among firms,flagship products
+KONGSBERG,10,NO,firm,214,73.0,"HUGIN, Munin (AUV)"
+TELEDYNE,9,US,firm,231,87.0,"Gavia (AUV), Slocum (glider)"
+SAAB,12,SE,firm,179,56.0,"Seaeye Falcon, Sabertooth (ROV / hybrid)"
+GENERAL DYNAMICS (BLUEFIN),4,US,firm,499,225.0,Bluefin-9 / -12 / -21 (AUV)
+L3HARRIS,7,US,firm,289,112.0,Iver (AUV)
+HUNTINGTON INGALLS (HYDROID),2,US,firm,862,444.0,REMUS (AUV)
+EXAIL (ECA),14,FR,firm,154,48.0,A18 (AUV)
+OCEANEERING,45,US,firm,48,10.0,
+TKMS (ATLAS ELEKTRONIK),96,DE,firm,18,4.0,
+NAVAL GROUP,22,FR,firm,89,23.0,
+BAE SYSTEMS,41,GB,firm,51,12.0,
+HANWHA,101,KR,firm,15,3.0,
+FINCANTIERI,3,IT,firm,619,294.0,"WASS (sonar, torpedoes), Graal Tech (AUV/ROV), WSense (underwater comms), NextGeo (survey), Defcomm (USV)"

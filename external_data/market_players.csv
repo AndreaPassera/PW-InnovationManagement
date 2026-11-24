@@ -1,0 +1,11 @@
+company,group_alias,flagship_products,segment,market_share,share_year,source,url,accessed,notes
+"Top 5 (Kongsberg, Teledyne, Saab, General Dynamics, L3Harris)",,,UUV,0.58,,MarkNtel (Step 0 literature note),,,only public share figure found; single source
+Kongsberg,KONGSBERG,"HUGIN, Munin (AUV)",AUV,,,,,,products to verify on the company site
+Huntington Ingalls (Hydroid),HUNTINGTON INGALLS (HYDROID),REMUS (AUV),AUV,,,,,,"Hydroid: Kongsberg 2008, HII 2020 (verify)"
+General Dynamics,GENERAL DYNAMICS (BLUEFIN),Bluefin-9 / -12 / -21 (AUV),AUV,,,,,,
+Saab,SAAB,"Seaeye Falcon, Sabertooth (ROV / hybrid)",ROV,,,,,,
+Teledyne,TELEDYNE,"Gavia (AUV), Slocum (glider)",AUV / glider,,,,,,
+L3Harris,L3HARRIS,Iver (AUV),AUV,,,,,,
+Exail,EXAIL (ECA),A18 (AUV),AUV,,,,,,
+Boeing,BOEING,Echo Voyager / Orca XLUUV,XLUUV,,,,,,
+Fincantieri (client),FINCANTIERI,"WASS (sonar, torpedoes), Graal Tech (AUV/ROV), WSense (underwater comms), NextGeo (survey), Defcomm (USV)",all,,,Fincantieri / Naval News,https://www.navalnews.com/naval-news/2026/07/fincantieri-acquires-four-companies-to-expand-underwater-drone-business/,2026-11-22,underwater segment revenue 667 m EUR in 2025 (Avvenire); pro-forma 1.1 bn EUR in 2026
